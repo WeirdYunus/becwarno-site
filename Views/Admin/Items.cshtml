@@ -1,0 +1,97 @@
+@model List<PortfolioItem>
+@inject IOptions<SiteOptions> Site
+@{
+    var type = (ItemType)ViewData["Type"]!;
+    var s = Site.Value;
+    ViewData["Title"] = "Manage " + type;
+    ViewData["Nav"] = "";
+    ViewData["NoIndex"] = true;
+    ViewData["AdminTab"] = type.ToString();
+}
+
+<div class="container section">
+    <partial name="_AdminNav" />
+
+    <div class="admin-bar">
+        <h2>@(type == ItemType.Product ? "Shop products" : type + "s")</h2>
+        <div class="btn-row">
+            @if (type == ItemType.Tattoo)
+            {
+                <a class="btn btn-small" href="#bulk-upload">Bulk add tattoos</a>
+            }
+            <a class="btn btn-small btn-solid" href="~/admin/items/create?type=@type">+ Add @type.ToString().ToLower()</a>
+        </div>
+    </div>
+
+    @if (type == ItemType.Tattoo)
+    {
+        <section class="section-alt" id="bulk-upload" aria-labelledby="bulk-upload-title">
+            <h3 id="bulk-upload-title">Bulk add tattoos from a folder</h3>
+            <p class="muted">Choose a folder of images. Each image will become a tattoo without a title. JPG, PNG, WEBP and GIF are supported; each image must be 5 MB or smaller. Up to 100 images and 100 MB of image data per upload. Other files are skipped.</p>
+            <form asp-action="BulkCreateTattoos" method="post" enctype="multipart/form-data" class="form form-narrow">
+                <div class="field">
+                    <label for="tattooFolder">Tattoo image folder</label>
+                    <input id="tattooFolder" type="file" name="imageFiles" accept=".jpg,.jpeg,.png,.webp,.gif" webkitdirectory directory multiple required />
+                </div>
+                <div><button class="btn btn-solid" type="submit">Upload folder images</button></div>
+            </form>
+        </section>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <p class="muted">Nothing here yet.</p>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>@(type == ItemType.Product ? "Category" : type == ItemType.Painting ? "Medium" : "Style")</th>
+                        @if (type == ItemType.Product) { <th>Price</th> }
+                        <th>Featured</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var confirmText = string.IsNullOrWhiteSpace(item.Title)
+                            ? "Delete this item? This cannot be undone."
+                            : "Delete '" + item.Title + "'? This cannot be undone.";
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                {
+                                    <img class="thumb" src="@item.ImageUrl" alt="" />
+                                }
+                                else
+                                {
+                                    <div class="thumb-ph">none</div>
+                                }
+                            </td>
+                            <td>@(string.IsNullOrWhiteSpace(item.Title) ? "—" : item.Title)</td>
+                            <td>@item.Category</td>
+                            @if (type == ItemType.Product)
+                            {
+                                <td>@(item.Price.HasValue ? s.CurrencySymbol + item.Price.Value.ToString("0.00", CultureInfo.InvariantCulture) : "—")</td>
+                            }
+                            <td>@if (item.IsFeatured) { <span class="badge">Yes</span> }</td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn btn-small" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="inline-form" data-confirm="@confirmText">
+                                        <button class="btn btn-small btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

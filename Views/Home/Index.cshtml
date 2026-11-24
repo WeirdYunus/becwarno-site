@@ -1,0 +1,82 @@
+@model List<PortfolioItem>
+@inject IOptions<SiteOptions> Site
+@{
+    var s = Site.Value;
+    ViewData["Title"] = "";
+    ViewData["Nav"] = "home";
+    ViewData["Description"] = "Becwarno — gothic handmade goods from the Etsy shop, original paintings and custom tattoos.";
+}
+
+<section class="hero">
+    <div class="container">
+        <partial name="_Rose" />
+        <span class="eyebrow">@s.Tagline</span>
+        <h1>@s.Name</h1>
+        <p class="lead">Where the macabre meets the handmade — objects, paintings and tattoos born after midnight.</p>
+        <div class="btn-row">
+            <a class="btn btn-solid" href="~/shop">Browse the shop</a>
+            <a class="btn" href="~/tattoos">See the ink</a>
+        </div>
+    </div>
+</section>
+
+<div class="container"><partial name="_Ornament" /></div>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="eyebrow">Three realms</span>
+            <h2>Choose your door</h2>
+            <p class="muted">Everything made by one pair of hands — pick where you'd like to wander first.</p>
+        </div>
+        <div class="grid grid-3">
+            <a class="realm reveal" href="~/shop">
+                <div class="arch-wrap"><div class="arch"><img src="~/images/shop.png" /></div></div>
+                <h3>Shop</h3>
+                <p>Handmade pieces from the Etsy shop — jewelry, decor, prints and curiosities.</p>
+                <span class="more eyebrow">Enter →</span>
+            </a>
+            <a class="realm reveal" href="~/paintings">
+                <div class="arch-wrap"><div class="arch"><img src="~/images/paintings.png" /></div></div>
+                <h3>Paintings</h3>
+                <p>Original canvases in oil, acrylic and mixed media.</p>
+                <span class="more eyebrow">Enter →</span>
+            </a>
+            <a class="realm reveal" href="~/tattoos">
+                <div class="arch-wrap"><div class="arch"><img src="~/images/tattoos.png" /></div></div>
+                <h3>Tattoos</h3>
+                <p>Custom ink from the tattoo studio — traditional, blackwork and fine line.</p>
+                <span class="more eyebrow">Enter →</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+@if (Model.Count > 0)
+{
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Fresh from the dark</span>
+                <h2>Featured works</h2>
+            </div>
+            <div class="grid">
+                @foreach (var item in Model)
+                {
+                    <partial name="_ItemCard" model="item" />
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="section">
+    <div class="container">
+        <div class="cta-band reveal">
+            <span class="eyebrow">Commissions &amp; bookings</span>
+            <h2>Have something in mind?</h2>
+            <p class="muted">Custom paintings, tattoo designs and special orders start with a message.</p>
+            <a class="btn btn-solid" href="~/about#contact">Get in touch</a>
+        </div>
+    </div>
+</section>

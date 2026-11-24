@@ -1,0 +1,55 @@
+@model GalleryViewModel
+@{
+    ViewData["Title"] = "Paintings";
+    ViewData["Nav"] = "paintings";
+    ViewData["Description"] = "Original gothic paintings by Becwarno.";
+}
+
+<div class="container">
+    <header class="page-head">
+        <span class="eyebrow">Original canvases</span>
+        <h1>Paintings</h1>
+        <p class="lead">Shadows, saints and things that watch from the corners.</p>
+    </header>
+
+    <partial name="_Filters" model="Model" />
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="empty">No paintings here yet — check back soon.</p>
+    }
+    else
+    {
+        <div class="masonry">
+            @foreach (var item in Model.Items)
+            {
+                var caption = string.IsNullOrWhiteSpace(item.Description) ? item.Title : item.Title + " — " + item.Description;
+                <figure class="frame reveal">
+                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    {
+                        <button type="button" data-lightbox="@item.ImageUrl" data-caption="@caption" data-link="@item.ExternalUrl" aria-label="View @item.Title larger">
+                            <div class="frame-art"><partial name="_ItemImage" model="item" /></div>
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="frame-art"><partial name="_ItemImage" model="item" /></div>
+                    }
+                    <figcaption>
+                        <strong>@item.Title</strong>
+                        @if (!string.IsNullOrWhiteSpace(item.Category))
+                        {
+                            <span>@item.Category</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(item.ExternalUrl))
+                        {
+                            <a class="frame-link" href="@item.ExternalUrl" target="_blank" rel="noopener noreferrer">View on Etsy →</a>
+                        }
+                    </figcaption>
+                </figure>
+            }
+        </div>
+    }
+</div>
+
+<partial name="_Lightbox" />

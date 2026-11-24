@@ -1,0 +1,48 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["Nav"] = "";
+    ViewData["NoIndex"] = true;
+    ViewData["AdminTab"] = "dashboard";
+    var recent = ViewData["Recent"] as List<PortfolioItem> ?? new List<PortfolioItem>();
+}
+
+<div class="container section">
+    <partial name="_AdminNav" />
+
+    <div class="stats">
+        <div class="stat"><b>@Model.Products</b><span>Products</span></div>
+        <div class="stat"><b>@Model.Paintings</b><span>Paintings</span></div>
+        <div class="stat"><b>@Model.Tattoos</b><span>Tattoos</span></div>
+        <div class="stat"><b>@Model.UnreadMessages</b><span>Unread messages</span></div>
+    </div>
+
+    <div class="admin-bar">
+        <h2>Latest items</h2>
+        <a class="btn btn-small btn-solid" href="~/admin/items/create">+ Add item</a>
+    </div>
+
+    @if (recent.Count == 0)
+    {
+        <p class="muted">Nothing here yet. Add your first item.</p>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Title</th><th>Type</th><th>Category</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var item in recent)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.Type</td>
+                            <td>@item.Category</td>
+                            <td><a class="btn btn-small" asp-action="Edit" asp-route-id="@item.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

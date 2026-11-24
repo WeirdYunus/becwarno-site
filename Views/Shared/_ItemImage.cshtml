@@ -1,0 +1,9 @@
+@model PortfolioItem
+@if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+{
+    <img src="@Model.ImageUrl" alt="@Model.Title" loading="lazy" />
+}
+else
+{
+    <partial name="_Placeholder" />
+}

@@ -1,0 +1,46 @@
+@model PortfolioItem
+@inject IOptions<SiteOptions> Site
+@{
+    var s = Site.Value;
+    string href;
+    bool external = false;
+
+    if (Model.Type == ItemType.Product)
+    {
+        var link = !string.IsNullOrWhiteSpace(Model.ExternalUrl) ? Model.ExternalUrl : s.EtsyUrl;
+        if (!string.IsNullOrWhiteSpace(link))
+        {
+            href = link;
+            external = true;
+        }
+        else
+        {
+            href = Url.Content("~/shop");
+        }
+    }
+    else
+    {
+        href = Url.Content(Model.Type == ItemType.Painting ? "~/paintings" : "~/tattoos");
+    }
+}
+<a class="card reveal" href="@href" target="@(external ? "_blank" : null)" rel="@(external ? "noopener noreferrer" : null)">
+    <div class="arch-wrap"><div class="arch"><partial name="_ItemImage" model="Model" /></div></div>
+    <div class="card-body">
+        @if (!string.IsNullOrWhiteSpace(Model.Category))
+        {
+            <span class="eyebrow">@Model.Category</span>
+        }
+        <h3>@Model.Title</h3>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+        <div class="card-foot">
+            @if (Model.Price.HasValue)
+            {
+                <span class="price">@(s.CurrencySymbol + Model.Price.Value.ToString("0.00", CultureInfo.InvariantCulture))</span>
+            }
+            <span class="more">@(Model.Type == ItemType.Product && external ? "View on Etsy →" : "View →")</span>
+        </div>
+    </div>
+</a>

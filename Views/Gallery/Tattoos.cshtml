@@ -1,0 +1,65 @@
+@model GalleryViewModel
+@{
+    ViewData["Title"] = "Tattoos";
+    ViewData["Nav"] = "tattoos";
+    ViewData["Description"] = "Custom gothic tattoos — traditional, blackwork and fine line.";
+}
+
+<div class="container">
+    <header class="page-head">
+        <span class="eyebrow">Tattoo studio</span>
+        <h1>Tattoos</h1>
+        <p class="lead">Permanent pieces, drawn to fit the body that wears them.</p>
+    </header>
+
+    <partial name="_Filters" model="Model" />
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="empty">No tattoos here yet — check back soon.</p>
+    }
+    else
+    {
+        <div class="tiles">
+            @foreach (var item in Model.Items)
+            {
+                var caption = string.IsNullOrWhiteSpace(item.Title)
+                    ? item.Description ?? ""
+                    : string.IsNullOrWhiteSpace(item.Description) ? item.Title : item.Title + " — " + item.Description;
+                var ariaLabel = string.IsNullOrWhiteSpace(item.Title) ? "View tattoo image larger" : "View " + item.Title + " larger";
+                <div class="tile reveal">
+                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    {
+                        <button type="button" data-lightbox="@item.ImageUrl" data-caption="@caption" aria-label="@ariaLabel">
+                            <partial name="_ItemImage" model="item" />
+                            @if (!string.IsNullOrWhiteSpace(item.Title) || !string.IsNullOrWhiteSpace(item.Category))
+                            {
+                                <div class="tile-cap">
+                                    @if (!string.IsNullOrWhiteSpace(item.Title)) { <strong>@item.Title</strong> }
+                                    @if (!string.IsNullOrWhiteSpace(item.Category)) { <span>@item.Category</span> }
+                                </div>
+                            }
+                        </button>
+                    }
+                    else
+                    {
+                        <partial name="_ItemImage" model="item" />
+                        @if (!string.IsNullOrWhiteSpace(item.Title) || !string.IsNullOrWhiteSpace(item.Category))
+                        {
+                            <div class="tile-cap">
+                                @if (!string.IsNullOrWhiteSpace(item.Title)) { <strong>@item.Title</strong> }
+                                @if (!string.IsNullOrWhiteSpace(item.Category)) { <span>@item.Category</span> }
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <div class="section text-center">
+        <a class="btn btn-solid" href="~/about#contact">Book a consultation</a>
+    </div>
+</div>
+
+<partial name="_Lightbox" />

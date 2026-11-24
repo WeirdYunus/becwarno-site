@@ -1,0 +1,20 @@
+@model GalleryViewModel
+@{
+    string action = Model.Type switch
+    {
+        ItemType.Product => "Shop",
+        ItemType.Painting => "Paintings",
+        _ => "Tattoos"
+    };
+}
+@if (Model.Categories.Count > 0)
+{
+    <nav class="filters" aria-label="Filter by category">
+        <a class="chip @(Model.SelectedCategory == null ? "active" : "")" href="@Url.Action(action, "Gallery", new { q = Model.Query })">All</a>
+        @foreach (var c in Model.Categories)
+        {
+            var active = string.Equals(c, Model.SelectedCategory, StringComparison.OrdinalIgnoreCase);
+            <a class="chip @(active ? "active" : "")" href="@Url.Action(action, "Gallery", new { category = c, q = Model.Query })">@c</a>
+        }
+    </nav>
+}

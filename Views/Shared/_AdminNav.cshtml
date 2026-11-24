@@ -1,0 +1,23 @@
+@{
+    var active = ViewData["AdminTab"] as string ?? "";
+}
+<div class="admin-bar">
+    <nav class="admin-tabs" aria-label="Admin">
+        <a class="chip @(active == "dashboard" ? "active" : "")" href="~/admin">Dashboard</a>
+        <a class="chip @(active == "Product" ? "active" : "")" href="~/admin/items?type=Product">Shop</a>
+        <a class="chip @(active == "Painting" ? "active" : "")" href="~/admin/items?type=Painting">Paintings</a>
+        <a class="chip @(active == "Tattoo" ? "active" : "")" href="~/admin/items?type=Tattoo">Tattoos</a>
+        <a class="chip @(active == "messages" ? "active" : "")" href="~/admin/messages">Messages</a>
+    </nav>
+    <form asp-action="Logout" asp-controller="Account" method="post" class="inline-form">
+        <button class="btn btn-small" type="submit">Sign out</button>
+    </form>
+</div>
+@if (TempData["Flash"] is string flash)
+{
+    <div class="alert alert-ok" role="status">@flash</div>
+}
+@if (TempData["FlashError"] is string flashError)
+{
+    <div class="alert alert-err" role="alert">@flashError</div>
+}

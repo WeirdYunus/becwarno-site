@@ -1,0 +1,83 @@
+@inject IOptions<SiteOptions> Site
+@{
+    var s = Site.Value;
+    var nav = ViewData["Nav"] as string ?? "";
+    var pageTitle = ViewData["Title"] as string;
+    var fullTitle = string.IsNullOrWhiteSpace(pageTitle) ? s.Name + " — " + s.Tagline : pageTitle + " — " + s.Name;
+    var description = ViewData["Description"] as string ?? "Dark art, handmade goods and custom tattoos by " + s.Name + ".";
+    var noIndex = ViewData["NoIndex"] != null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@fullTitle</title>
+    <meta name="description" content="@description" />
+    <meta name="theme-color" content="#0a090c" />
+    @if (noIndex)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
+    <meta property="og:title" content="@fullTitle" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
+    <script src="~/js/init.js"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_Defs" />
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="logo" href="~/" aria-label="@s.Name — home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22V10C5 6 9 4 12 1c3 3 7 5 7 9v12" /><path d="M12 9v9M9 12h6" /></svg>
+                <span>@s.Name</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle menu"><span></span></button>
+            <nav class="site-nav" id="site-nav" aria-label="Main">
+                <ul class="nav-list">
+                    <li><a href="~/" class="@(nav == "home" ? "active" : "")">Home</a></li>
+                    <li><a href="~/shop" class="@(nav == "shop" ? "active" : "")">Shop</a></li>
+                    <li><a href="~/paintings" class="@(nav == "paintings" ? "active" : "")">Paintings</a></li>
+                    <li><a href="~/tattoos" class="@(nav == "tattoos" ? "active" : "")">Tattoos</a></li>
+                    <li><a href="~/about" class="@(nav == "about" ? "active" : "")">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <span class="footer-logo">@s.Name</span>
+            <div class="muted">@s.Tagline</div>
+            <partial name="_Ornament" />
+            <ul class="footer-nav">
+                <li><a href="~/">Home</a></li>
+                <li><a href="~/shop">Shop</a></li>
+                <li><a href="~/paintings">Paintings</a></li>
+                <li><a href="~/tattoos">Tattoos</a></li>
+                <li><a href="~/about">About</a></li>
+                @if (!string.IsNullOrWhiteSpace(s.EtsyUrl))
+                {
+                    <li><a href="@s.EtsyUrl" target="_blank" rel="noopener noreferrer">Etsy</a></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(s.InstagramUrl))
+                {
+                    <li><a href="@s.InstagramUrl" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                }
+            </ul>
+            <p class="footer-small">© @DateTime.UtcNow.Year @s.Name. All rights reserved. · <a href="~/admin">Admin</a></p>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

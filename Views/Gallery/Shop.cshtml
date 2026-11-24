@@ -1,0 +1,48 @@
+@model GalleryViewModel
+@inject IOptions<SiteOptions> Site
+@{
+    var s = Site.Value;
+    ViewData["Title"] = "Shop";
+    ViewData["Nav"] = "shop";
+    ViewData["Description"] = "Handmade gothic goods from the Becwarno Etsy shop.";
+}
+
+<div class="container">
+    <header class="page-head">
+        <span class="eyebrow">Etsy shop</span>
+        <h1>The Shop</h1>
+        <p class="lead">Small-batch curiosities, each one finished by hand.</p>
+    </header>
+
+    <form class="search" method="get" action="@Url.Action("Shop", "Gallery")" role="search">
+        @if (Model.SelectedCategory != null)
+        {
+            <input type="hidden" name="category" value="@Model.SelectedCategory" />
+        }
+        <input type="search" name="q" value="@Model.Query" placeholder="Search the shop…" maxlength="60" aria-label="Search the shop" />
+        <button class="btn btn-small" type="submit">Search</button>
+    </form>
+
+    <partial name="_Filters" model="Model" />
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="empty">Nothing found here yet — check back soon.</p>
+    }
+    else
+    {
+        <div class="grid">
+            @foreach (var item in Model.Items)
+            {
+                <partial name="_ItemCard" model="item" />
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(s.EtsyUrl))
+    {
+        <div class="section text-center">
+            <a class="btn btn-solid" href="@s.EtsyUrl" target="_blank" rel="noopener noreferrer">Visit the full Etsy shop</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,121 @@
+@model ContactForm
+@inject IOptions<SiteOptions> Site
+@{
+    var s = Site.Value;
+    ViewData["Title"] = "About";
+    ViewData["Nav"] = "about";
+    ViewData["Description"] = "About Becwarno — artist, maker and tattooer. Get in touch for commissions and bookings.";
+}
+
+<div class="container">
+    <header class="page-head">
+        <span class="eyebrow">About</span>
+        <h1>@s.Name</h1>
+        <p class="lead">An artist of shadows, thread, ink and canvas.</p>
+    </header>
+</div>
+
+<section class="section about-intro">
+    <div class="container about-grid">
+        <div class="arch-wrap reveal"><div class="arch"><img src="~/images/portrait.jpeg" alt="Portrait of Becwarno" /></div></div>
+        <div class="reveal">
+            <h2>The hand behind the dark</h2>
+            <p>@s.Name makes things that feel like they were found in an old chapel after closing time. Handmade goods in the Etsy shop, original paintings and custom tattoos all share one language: candlelight, bone and a little blood.</p>
+            <p>Every piece is made one at a time — whether it is a pendant, a canvas or a design drawn to sit on your skin.</p>
+            <div class="btn-row">
+                <a class="btn btn-solid" href="#contact">Send a message</a>
+                @if (!string.IsNullOrWhiteSpace(s.EtsyUrl))
+                {
+                    <a class="btn" href="@s.EtsyUrl" target="_blank" rel="noopener noreferrer">Etsy shop</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="pillars">
+            <div class="pillar reveal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" /></svg>
+                <h3>The Shop</h3>
+                <p>Handmade goods shipped from the Etsy shop — small batches, finished by hand.</p>
+            </div>
+            <div class="pillar reveal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4c-6 2-9 6-10 10l2 2c4-1 8-4 10-10zM9 15c-3 0-4 2-4 4 0 1-1 2-2 2 4 1 8 0 8-4" /></svg>
+                <h3>The Canvas</h3>
+                <p>Original paintings in oil, acrylic and mixed media, made as one-offs.</p>
+            </div>
+            <div class="pillar reveal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l2-5 3 3zM6 15L16 5l3 3L9 18M14 7l3 3" /></svg>
+                <h3>The Ink</h3>
+                <p>Custom tattoos from the studio, designed around you and your story.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="contact">
+    <div class="container">
+        <div class="section-head">
+            <span class="eyebrow">Contact</span>
+            <h2>Write to the shadows</h2>
+            <p class="muted">Commissions, tattoo bookings, wholesale or just a hello.</p>
+        </div>
+
+        @if (TempData["Sent"] != null)
+        {
+            <div class="alert alert-ok form-narrow" role="status">Thank you — your message has been sent. You'll hear back soon.</div>
+        }
+
+        <form class="form form-narrow" asp-action="About" asp-controller="Home" method="post">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+
+            <div class="two-col">
+                <div class="field">
+                    <label for="Name">Name</label>
+                    <input asp-for="Name" type="text" maxlength="80" required autocomplete="name" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+                <div class="field">
+                    <label for="Email">Email</label>
+                    <input asp-for="Email" type="email" maxlength="120" required autocomplete="email" />
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="Subject">Subject <span class="muted">(optional)</span></label>
+                <input asp-for="Subject" type="text" maxlength="120" />
+                <span asp-validation-for="Subject" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label for="Message">Message</label>
+                <textarea asp-for="Message" maxlength="2000" required></textarea>
+                <span asp-validation-for="Message" class="field-error"></span>
+            </div>
+
+            <div class="hp" aria-hidden="true">
+                <label for="Website">Leave this field empty</label>
+                <input asp-for="Website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div><button class="btn btn-solid" type="submit">Send message</button></div>
+        </form>
+
+        @if (!string.IsNullOrWhiteSpace(s.ContactEmail) || !string.IsNullOrWhiteSpace(s.InstagramUrl))
+        {
+            <div class="socials">
+                @if (!string.IsNullOrWhiteSpace(s.ContactEmail))
+                {
+                    <a href="mailto:@s.ContactEmail">@s.ContactEmail</a>
+                }
+                @if (!string.IsNullOrWhiteSpace(s.InstagramUrl))
+                {
+                    <a href="@s.InstagramUrl" target="_blank" rel="noopener noreferrer">Instagram</a>
+                }
+            </div>
+        }
+    </div>
+</section>

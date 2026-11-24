@@ -1,0 +1,77 @@
+@model PortfolioItem
+@{
+    bool isNew = Model.Id == 0;
+    string formAction = isNew ? "Create" : "Edit";
+    int? routeId = isNew ? null : Model.Id;
+    ViewData["Title"] = isNew ? "Add item" : "Edit item";
+    ViewData["Nav"] = "";
+    ViewData["NoIndex"] = true;
+    ViewData["AdminTab"] = Model.Type.ToString();
+}
+
+<div class="container section">
+    <partial name="_AdminNav" />
+
+    <h2>@(isNew ? "Add item" : "Edit item")</h2>
+
+    <form class="form form-narrow" asp-action="@formAction" asp-route-id="@routeId" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+
+        <div class="two-col">
+            <div class="field">
+                <label for="Type">Type</label>
+                <select asp-for="Type" asp-items="Html.GetEnumSelectList<ItemType>()" data-type-select></select>
+            </div>
+            <div class="field">
+                <label for="Category"><span data-category-label>Category</span></label>
+                <input asp-for="Category" type="text" maxlength="60" />
+                <span asp-validation-for="Category" class="field-error"></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="Title">Title <span class="muted">(optional for tattoos)</span></label>
+            <input asp-for="Title" type="text" maxlength="120" />
+            <span asp-validation-for="Title" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label for="Description">Description</label>
+            <textarea asp-for="Description" maxlength="1000"></textarea>
+            <span asp-validation-for="Description" class="field-error"></span>
+        </div>
+
+        <div class="field" data-only-type="0">
+            <label for="Price">Price</label>
+            <input asp-for="Price" type="number" step="0.01" min="0" />
+            <span asp-validation-for="Price" class="field-error"></span>
+        </div>
+
+        <div class="field" data-only-type="0 1">
+            <label for="ExternalUrl">Etsy listing link</label>
+            <input asp-for="ExternalUrl" type="text" maxlength="500" placeholder="https://www.etsy.com/listing/…" />
+            <span asp-validation-for="ExternalUrl" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <span class="label">Image</span>
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <img class="current-img" src="@Model.ImageUrl" alt="Current image" />
+            }
+            <input type="file" name="imageFile" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Upload an image" />
+            <div class="hint">Upload a JPG, PNG, WEBP or GIF (max 5 MB) — or paste an image link below.</div>
+            <input asp-for="ImageUrl" type="text" maxlength="500" placeholder="https://…/image.jpg" />
+            <span asp-validation-for="ImageUrl" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label class="check"><input asp-for="IsFeatured" type="checkbox" /> Show on the home page</label>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-solid" type="submit">Save</button>
+            <a class="btn" href="~/admin/items?type=@Model.Type">Cancel</a>
+        </div>
+    </form>
+</div>
